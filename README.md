@@ -26,8 +26,9 @@ sudo apt-get install libzmq3-dev libpcap-dev
 Сначала клонируйте репозиторий с проектом:
 
 ```bash
-git clone <https://github.com/kasperekd/fake_trx_sim.git>
-cd <fake_trx_sim>
+git clone https://github.com/kasperekd/fake_trx_sim.git
+cd fake_trx_sim
+cd src
 ```
 
 ### Компиляция
