@@ -1,3 +1,6 @@
 .vscode
 *.db
+*.db-shm
+*.db-wal
+*/hlr.db-shm
 build
