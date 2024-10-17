@@ -19,12 +19,12 @@ start_program osmo-stp "$CFG_PATH/osmo-stp.cfg" &
 start_program osmo-msc "$CFG_PATH/osmo-msc.cfg" &
 start_program osmo-bsc "$CFG_PATH/osmo-bsc.cfg" &
 
-sudo xterm -e python3 "$USER_HOME/osmocom-bb/src/target/trx_toolkit/fake_trx.py" &
+sudo xterm -e python3 "$USER_HOME/2G/osmocom-bb/src/target/trx_toolkit/fake_trx.py" &
 start_program "$USER_HOME/2G/osmo-bts/src/osmo-bts-trx/osmo-bts-trx" "$CFG_PATH/osmo-bts.cfg" &
-start_program "$USER_HOME/osmocom-bb/src/host/trxcon/src/trxcon" &
-start_program "$USER_HOME/osmocom-bb/src/host/layer23/src/misc/ccch_scan" -a ARFCN -i 127.0.0.1 &
+start_program "$USER_HOME/2G/osmocom-bb/src/host/trxcon/src/trxcon" &
+start_program "$USER_HOME/2G/osmocom-bb/src/host/layer23/src/misc/ccch_scan" -a ARFCN -i 127.0.0.1 &
 
-start_program mobile "$CFG_PATH/default.cfg" &
+start_program "$USER_HOME/2G/osmocom-bb/src/host/layer23/src/mobile/mobile" "$CFG_PATH/default.cfg" &
 
 echo "Press Enter to close all programs..."
 read enter_to_close
