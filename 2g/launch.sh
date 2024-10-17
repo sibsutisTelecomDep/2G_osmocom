@@ -2,9 +2,9 @@
 
 pids=()
 CFG_PATH="$PWD/cfg"
-USER_HOME="$HOME" # or... 
+# USER_HOME="$HOME" # or... 
 # USER_HOME="/home/<YOUR USER>" 
-# USER_HOME="/home/kasperekd" 
+USER_HOME="/home/kasperekd" 
 
 echo $CFG_PATH
 start_program() {
