@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO: Компилировать без тулчейна (gcc-arm-none-eabi)  
+
 # Путь для установки
 install_path="/home/kasperekd/2G"
 
@@ -17,7 +19,7 @@ install_packages() {
     sudo apt-get install -y python3
     read -p "Нажмите Enter для продолжения сборки"
     sudo apt-get install -y build-essential libtool libtalloc-dev libsctp-dev shtool autoconf automake git-core pkg-config make gcc gnutls-dev libusb-1.0.0-dev libmnl-dev libpcsclite-dev \
-                            libortp-dev dahdi-source libsqlite3-dev libc-ares-dev libgnutls28-dev xterm xfonts-base libc6-dev
+                            libortp-dev dahdi-source libsqlite3-dev libc-ares-dev libgnutls28-dev xterm xfonts-base libc6-dev gcc-arm-none-eabi
 
     read -p "Нажмите Enter для продолжения сборки"                         
 }
