@@ -76,13 +76,27 @@
     - name: Download UHD images
       command: uhd_images_downloader
 
-
     - name: Create install directory
       file:
         path: "{{ install_path }}"
         state: directory
         owner: "{{ install_user }}"
         group: "{{ install_user }}"
+
+    - name: Clone and build liburing
+      git:
+        repo: "https://github.com/axboe/liburing.git"
+        dest: "{{ install_path }}/liburing"
+        clone: yes
+      register: liburing_cloned
+
+    - name: Build and install liburing
+      when: liburing_cloned
+      shell: |
+        cd {{ install_path }}/liburing
+        ./configure
+        make -j$(nproc)
+        make install
 
     - name: Clone Osmocom libraries
       git:
