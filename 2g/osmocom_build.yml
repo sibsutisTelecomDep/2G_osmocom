@@ -149,7 +149,7 @@
       shell: |
         cd {{ install_path }}/osmo-bts
         autoreconf -fi
-        ./configure
+        ./configure # --enable-trx 
         sudo sed -i 's/^#am__append_2 =/am__append_2 =/' "./src/Makefile"
         sudo make -j8
         sudo make install
