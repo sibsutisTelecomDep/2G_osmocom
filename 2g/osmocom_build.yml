@@ -22,6 +22,7 @@
       - "osmo-ggsn"
       - "osmo-sgsn"
       - "osmo-bsc"
+      - "osmo-bts"
   tasks:
     - name: Update and upgrade apt packages
       apt:
