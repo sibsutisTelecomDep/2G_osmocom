@@ -5,6 +5,7 @@
   vars:
     install_path: "{{ install_path }}"
     install_user: "{{ install_user }}"
+    debug_mode: false  # true для включения режима отладки
     osmocom_libs:
       - "libosmocore"
       - "libosmo-abis"
@@ -22,7 +23,7 @@
       - "osmo-ggsn"
       - "osmo-sgsn"
       - "osmo-bsc"
-      - "osmo-bts"
+      # - "osmo-bts" # Отделной задачей
   tasks:
     - name: Update and upgrade apt packages
       apt:
@@ -84,21 +85,6 @@
         owner: "{{ install_user }}"
         group: "{{ install_user }}"
 
-    - name: Clone and build liburing
-      git:
-        repo: "https://github.com/axboe/liburing.git"
-        dest: "{{ install_path }}/liburing"
-        clone: yes
-      register: liburing_cloned
-
-    - name: Build and install liburing
-      when: liburing_cloned
-      shell: |
-        cd {{ install_path }}/liburing
-        ./configure
-        make -j$(nproc)
-        make install
-
     - name: Clone Osmocom libraries
       git:
         repo: "https://gitea.osmocom.org/osmocom/{{ item }}.git"
@@ -106,7 +92,6 @@
       loop: "{{ osmocom_libs }}"
       loop_control:
         label: "{{ item }}"
-      register: osmocom_lib_cloned
 
     - name: Clone Osmocom components
       git:
@@ -115,14 +100,13 @@
       loop: "{{ osmocom_components }}"
       loop_control:
         label: "{{ item }}"
-      register: osmocom_component_cloned
 
     - name: Compile and install Osmocom libraries
       shell: |
         cd {{ install_path }}/{{ item }}
         autoreconf -fi
-        ./configure
-        sudo make -j8
+        ./configure CFLAGS="{{ '-g' if debug_mode else '' }}"
+        sudo make -j$(nproc)
         sudo make install
       loop: "{{ osmocom_libs }}"
       loop_control:
@@ -135,8 +119,8 @@
       shell: |
         cd {{ install_path }}/{{ item }}
         autoreconf -fi
-        ./configure
-        sudo make -j8
+        ./configure CFLAGS="{{ '-g' if debug_mode else '' }}"
+        sudo make -j$(nproc)
         sudo make install
       loop: "{{ osmocom_components }}"
       loop_control:
@@ -149,22 +133,9 @@
       shell: |
         cd {{ install_path }}/osmo-bts
         autoreconf -fi
-        ./configure # --enable-trx 
-        sudo sed -i 's/^#am__append_2 =/am__append_2 =/' "./src/Makefile"
-        sudo make -j8
+        ./configure --enable-trx CFLAGS="{{ '-g' if debug_mode else '' }}"
+        sudo make -j$(nproc)
         sudo make install
-
-    - name: Clone and build osmocom-bb
-      git:
-        repo: "https://gitea.osmocom.org/phone-side/osmocom-bb.git"
-        dest: "{{ install_path }}/osmocom-bb"
-        clone: yes
-      register: osmocom_bb_cloned
-
-    - name: Clone, compile, and install osmocom-bb
-      shell: |
-        cd {{ install_path }}/osmocom-bb/src
-        sudo make -j8
 
     - name: Clone osmo-trx repository
       git:
@@ -178,8 +149,21 @@
         cd {{ install_path }}/osmo-trx
         sudo autoreconf -fi
         sudo ./configure --with-uhd 
-        sudo make -j8
+        sudo make -j$(nproc)
         sudo make install
+
+    - name: Clone and build osmocom-bb
+      git:
+        repo: "https://gitea.osmocom.org/phone-side/osmocom-bb.git"
+        dest: "{{ install_path }}/osmocom-bb"
+        clone: yes
+      register: osmocom_bb_cloned
+
+    - name: Clone, compile, and install osmocom-bb
+      shell: |
+        cd {{ install_path }}/osmocom-bb/src
+        sudo make -j$(nproc)
 
     - name: Update shared libraries cache
       command: ldconfig
+
