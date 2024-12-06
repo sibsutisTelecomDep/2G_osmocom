@@ -1,0 +1,210 @@
+@startuml
+skinparam componentStyle rectangle
+
+title Roadmap: От битов до USRP (с параметрами функций)
+
+' Определение компонентов
+component "ms_upper.cpp" as upper {
+    [start_threads()\nЗапускает потоки для управления и передачи]
+    [driveTx()\nОбработка очереди передачи]
+}
+
+component "ms_trxcon_if.cpp" as trxcon {
+    [trxcon_phyif_handle_burst_req(struct trxcon_phyif_burst_req *br)\nОбработка запроса на передачу бёрста]
+}
+
+component "sigProcLib.cpp" as sigproc {
+    [modulateBurst(const BitVector &bits, int guardPeriodLength, int sps)\nМодуляция битов в сигнал\nВозвращает: signalVector*]
+    
+    [generateGSMPulse(int sps)\nГенерация GSM импульса\nВозвращает: signalVector*]
+    
+    [GMSKRotate(signalVector *y, int sps)\nПрименяет GMSK вращение\nВозвращает: void]
+    
+    [generateEdgeBurst(int tsc)\nГенерация EDGE бёрста\nВозвращает: signalVector*]
+}
+
+component "Transceiver.cpp" as transceiver {
+    [addRadioVector(size_t chan, BitVector &bits, int RSSI, GSM::Time &wTime)\nДобавление вектора для передачи]
+    
+    [pushRadioVector(GSM::Time &nowTime)\nОтправка вектора в радиоинтерфейс]
+    
+    [driveTxFIFO()\nУправление очередью передачи]
+    
+    [driveTxPriorityQueue(size_t chan)\nУправление приоритетной очередью]
+}
+
+component "radioInterface.cpp" as radio {
+    [radioifyVector(signalVector &wVector)\nПреобразование вектора для радио]
+    
+    [pushBuffer(void *buf, size_t len)\nЗапись в буфер устройства]
+    
+    [driveTransmitRadio()\nУправление передачей]
+}
+
+component "Device Drivers" as drivers {
+    package "UHDDevice.cpp" {
+        [writeSamples(short *buf, int len, bool *underrun, TIMESTAMP timestamp)\nЗапись сэмплов в UHD]
+        
+        [setTxFreq(double freq)\nУстановка частоты передачи]
+        
+        [setTxGain(double gain)\nУстановка усиления передачи]
+    }
+    
+    package "USRPDevice.cpp" {
+        [writeSamples(short *buf, int len, bool *underrun, TIMESTAMP timestamp)\nЗапись сэмплов в USRP]
+        
+        [setTxFreq(double freq)\nУстановка частоты передачи]
+        
+        [setTxGain(double gain)\nУстановка усиления передачи]
+    }
+}
+
+' Определение потока данных
+
+note right of upper
+  Инициализация передачи
+  Управление потоками
+end note
+
+note right of sigproc
+  Модуляция и формирование сигнала
+  Параметры: биты, длина, частота дискретизации
+end note
+
+note right of radio
+  Подготовка данных для устройства
+  Буферизация и управление передачей
+end note
+
+note right of drivers
+  Взаимодействие с SDR
+  Параметры: буфер данных, временные метки
+end note
+
+
+skinparam componentStyle rectangle
+
+
+title Roadmap: От битов до USRP
+
+
+' Определение компонентов
+
+component "ms_upper.cpp" as upper {
+
+    [start_threads()]
+
+    [driveTx()]
+
+}
+
+
+component "ms_trxcon_if.cpp" as trxcon {
+
+    [trxcon_phyif_handle_burst_req()]
+
+}
+
+
+component "sigProcLib.cpp" as sigproc {
+
+    [modulateBurst()]
+
+    [generateGSMPulse()]
+
+    [GMSKRotate()]
+
+    [generateEdgeBurst()]
+
+}
+
+
+component "Transceiver.cpp" as transceiver {
+
+    [addRadioVector()]
+
+    [pushRadioVector()]
+
+    [driveTxFIFO()]
+
+    [driveTxPriorityQueue()]
+
+}
+
+
+component "radioInterface.cpp" as radio {
+
+    [radioifyVector()]
+
+    [pushBuffer()]
+
+    [driveTransmitRadio()]
+
+}
+
+
+component "Device Drivers" as drivers {
+
+    package "UHDDevice.cpp" {
+
+        [writeSamples(UHD)]
+
+        [setTxFreq(UHD)]
+
+        [setTxGain(UHD)]
+
+    }
+
+    
+
+    package "USRPDevice.cpp" {
+
+        [writeSamples(USRP)]
+
+        [setTxFreq(USRP)]
+
+        [setTxGain(USRP)]
+
+    }
+
+}
+
+
+' Определение потока данных
+
+[start_threads()] -down-> [driveTx()]
+
+[driveTx()] -down-> [trxcon_phyif_handle_burst_req()]
+
+
+[trxcon_phyif_handle_burst_req()] -down-> [modulateBurst()]
+
+[modulateBurst()] -down-> [generateGSMPulse()]
+
+[generateGSMPulse()] -down-> [GMSKRotate()]
+
+[GMSKRotate()] -down-> [generateEdgeBurst()]
+
+
+[generateEdgeBurst()] -down-> [addRadioVector()]
+
+[addRadioVector()] -down-> [pushRadioVector()]
+
+[pushRadioVector()] -down-> [driveTxFIFO()]
+
+[driveTxFIFO()] -down-> [driveTxPriorityQueue()]
+
+
+[driveTxPriorityQueue()] -down-> [radioifyVector()]
+
+[radioifyVector()] -down-> [pushBuffer()]
+
+[pushBuffer()] -down-> [driveTransmitRadio()]
+
+
+[driveTransmitRadio()] -down-> [writeSamples(UHD)]
+
+[driveTransmitRadio()] -down-> [writeSamples(USRP)]
+
+
+@enduml

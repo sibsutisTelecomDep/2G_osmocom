@@ -1,0 +1,171 @@
+@startuml
+skinparam componentStyle rectangle
+
+title Roadmap: От USRP до битов (с параметрами функций)
+
+' Определение компонентов
+
+component "Device Drivers" as drivers {
+    package "UHDDevice.cpp" {
+        [readSamples(short *buf, int len, bool *overrun, TIMESTAMP timestamp)\nЧтение сэмплов с UHD]
+        
+        [setRxFreq(double freq)\nУстановка частоты приема]
+        
+        [setRxGain(double gain)\nУстановка усиления приема]
+    }
+    
+    package "USRPDevice.cpp" {
+        [readSamples(short *buf, int len, bool *overrun, TIMESTAMP timestamp)\nЧтение сэмплов с USRP]
+        
+        [setRxFreq(double freq)\nУстановка частоты приема]
+        
+        [setRxGain(double gain)\nУстановка усиления приема]
+    }
+}
+
+component "radioInterface.cpp" as radio {
+    [receiveRadio()\nПрием данных с радио]
+    
+    [pullBuffer()\nЧтение из буфера устройства]
+    
+    [convertReceivedVector()\nПреобразование принятого вектора]
+}
+
+component "Transceiver.cpp" as transceiver {
+    [driveReceiveFIFO()\nУправление очередью приема]
+    
+    [pullRadioVector()\nПолучение вектора из радиоинтерфейса]
+    
+    [receiveBurst(size_t chan)\nПрием бёрста]
+}
+
+component "sigProcLib.cpp" as sigproc {
+    [demodulate(const signalVector &rxBurst)\nДемодуляция принятого сигнала\nВозвращает: SoftVector*]
+    
+    [correlateSync(const signalVector &rxBurst, int sps)\nПоиск синхронизации\nВозвращает: float]
+    
+    [detectBurst(const signalVector &rxBurst)\nОбнаружение бёрста\nВозвращает: bool]
+    
+    [equalize(const signalVector &rxBurst)\nЭквализация сигнала\nВозвращает: signalVector*]
+}
+
+component "ms_trxcon_if.cpp" as trxcon {
+    [trxcon_phyif_handle_burst_ind(struct trxcon_phyif_burst_ind *bi)\nОбработка индикации принятого бёрста]
+}
+
+component "ms_upper.cpp" as upper {
+    [driveRx()\nОбработка принятых данных]
+    
+    [processRxBurst()\nОбработка принятого бёрста]
+}
+
+
+skinparam componentStyle rectangle
+
+title Roadmap: От USRP до битов
+
+' Определение компонентов
+
+component "Device Drivers" as drivers {
+    package "UHDDevice.cpp" {
+        [readSamples()]
+
+        [setRxFreq()]
+
+        [setRxGain()]
+    }
+    
+    package "USRPDevice.cpp" {
+        [readSamples()]
+
+        [setRxFreq()]
+
+        [setRxGain()]
+    }
+}
+
+component "radioInterface.cpp" as radio {
+    [receiveRadio()]
+
+    [pullBuffer()]
+
+    [convertReceivedVector()]
+}
+
+component "Transceiver.cpp" as transceiver {
+    [driveReceiveFIFO()]
+
+    [pullRadioVector()]
+
+    [receiveBurst()]
+}
+
+component "sigProcLib.cpp" as sigproc {
+    [demodulate()]
+
+    [correlateSync()]
+
+    [detectBurst()]
+
+    [equalize()]
+}
+
+component "ms_trxcon_if.cpp" as trxcon {
+    [trxcon_phyif_handle_burst_ind()]
+}
+
+component "ms_upper.cpp" as upper {
+    [driveRx()]
+
+    [processRxBurst()]
+}
+
+' Определение потока данных
+
+[readSamples()] -up-> [receiveRadio()]
+
+[receiveRadio()] -up-> [pullBuffer()]
+
+[pullBuffer()] -up-> [convertReceivedVector()]
+
+[convertReceivedVector()] -up-> [driveReceiveFIFO()]
+
+[driveReceiveFIFO()] -up-> [pullRadioVector()]
+
+[pullRadioVector()] -up-> [receiveBurst()]
+
+[receiveBurst()] -up-> [detectBurst()]
+
+[detectBurst()] -up-> [correlateSync()]
+
+[correlateSync()] -up-> [equalize()]
+
+[equalize()] -up-> [demodulate()]
+
+[demodulate()] -up-> [trxcon_phyif_handle_burst_ind()]
+
+[trxcon_phyif_handle_burst_ind()] -up-> [driveRx()]
+
+[driveRx()] -up-> [processRxBurst()]
+
+note left of drivers
+  Прием данных с SDR
+  Параметры: буфер данных, временные метки
+end note
+
+note left of radio
+  Обработка принятых данных
+  Буферизация и преобразование
+end note
+
+note left of sigproc
+  Демодуляция и обработка сигнала
+  Поиск синхронизации, эквализация
+end note
+
+note left of upper
+  Финальная обработка данных
+  Передача на верхние уровни
+end note
+
+@enduml
