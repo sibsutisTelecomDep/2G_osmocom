@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -lzmq -lpcap
+CXXFLAGS = -lzmq
 TARGET = main
 BUILD_DIR = ./build
 SRC = main.cpp
