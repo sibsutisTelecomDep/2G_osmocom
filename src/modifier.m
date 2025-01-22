@@ -1,4 +1,3 @@
-% Создаем TCP/IP сервер
 clear all;
 clear functions;
 server = tcpserver("127.0.0.1", 5556);
