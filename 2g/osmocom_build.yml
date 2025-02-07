@@ -63,6 +63,14 @@
       command: sudo apt-get install -y libusb-1.0.0-dev
       become: true
 
+    - name: Install liburing-dev
+      command: sudo apt-get install -y liburing-dev
+      become: true
+
+    - name: Install libosmo-netif-dev
+      command: sudo apt-get install -y libosmo-netif-dev
+      become: true
+
     - name: Add Ettus Research PPA for UHD
       apt_repository:
         repo: "ppa:ettusresearch/uhd"
@@ -131,6 +139,7 @@
 
     - name: Clone, compile, and install osmo-bts
       shell: |
+        git clone https://gitea.osmocom.org/cellular-infrastructure/osmo-bts.git
         cd {{ install_path }}/osmo-bts
         autoreconf -fi
         ./configure --enable-trx CFLAGS="{{ '-g' if debug_mode else '' }}"
