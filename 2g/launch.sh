@@ -90,10 +90,10 @@ sudo xterm -e python3 "$USER_HOME/2G/osmocom-bb/src/target/trx_toolkit/fake_trx.
 start_program "osmo-bts-trx" "./cfg/osmo-bts-trx.cfg" &
 echo "Press Enter to continue..."
 read e
-sudo xterm -e "../src/build/main" -f 127.0.0.1 -t 127.0.0.1 -b 6555 -p 6888 -n 1 &
-echo "Press Enter to continue..."
-read e
-sudo xterm -e "$USER_HOME/2G/osmocom-bb/src/host/trxcon/src/trxcon" --trx-port 6888 &
+# sudo xterm -e "../src/build/main" -f 127.0.0.1 -t 127.0.0.1 -b 6555 -p 6888 -n 1 &
+# echo "Press Enter to continue..."
+# read e
+sudo xterm -e "$USER_HOME/2G/osmocom-bb/src/host/trxcon/src/trxcon" --trx-port 6555 &
 # sudo xterm -e "$USER_HOME/2G/osmocom-bb/src/host/trxcon/src/trxcon" &
 echo "Press Enter to continue..."
 read e

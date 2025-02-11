@@ -12,7 +12,7 @@ try
             startTime = tic;
             timeout = 10;
 
-            while isempty(client) && toc(startTime) < timeout
+            while isempty(client) && toc(startTime)
 
                 if server.NumBytesAvailable > 0
                     client = server;
@@ -22,12 +22,12 @@ try
                 pause(0.1);
             end
 
-            if isempty(client)
-                disp("Timeout occurred while waiting for connection or no data received.");
-                continue;
-            end
+            % if isempty(client)
+            %     disp("Timeout occurred while waiting for connection or no data received.");
+            %     continue;
+            % end
 
-            disp(['Client (potentially) connected. Starting data processing.']);
+            % disp(['Client (potentially) connected. Starting data processing.']);
 
             while true
 
@@ -40,7 +40,7 @@ try
                     end
 
                     dataLength = length(data);
-                    disp(['Received data length: ' num2str(dataLength)]);
+                    % disp(['Received data length: ' num2str(dataLength)]);
 
                     if dataLength == 154 || dataLength == 156
 
@@ -53,7 +53,7 @@ try
                             end
 
                             originalRSSI = data(rssiIndex);
-                            disp(['Original RSSI: ' num2str(originalRSSI)]);
+                            % disp(['Original RSSI: ' num2str(originalRSSI)]);
 
                             newRSSI = originalRSSI - 1;
 
@@ -64,31 +64,31 @@ try
                             end
 
                             data(rssiIndex) = newRSSI;
-                            disp(['Modified RSSI: ' num2str(newRSSI)]);
+                            % disp(['Modified RSSI: ' num2str(newRSSI)]);
 
                             write(server, data, "uint8");
-                            disp(['Sent modified data (length: ' num2str(length(data)) ')']);
+                            % disp(['Sent modified data (length: ' num2str(length(data)) ')']);
 
                         catch packetError
-                            disp(['Error processing packet: ' packetError.message]);
+                            % disp(['Error processing packet: ' packetError.message]);
                             write(server, data, "uint8");
-                            disp(['Sent original data back due to error.']);
+                            % disp(['Sent original data back due to error.']);
                         end
 
                     else
-                        disp(['Received data with unexpected length: ' num2str(dataLength)]);
+                        % disp(['Received data with unexpected length: ' num2str(dataLength)]);
                         write(server, data, "uint8");
-                        disp(['Sent original data back.']);
+                        % disp(['Sent original data back.']);
                     end
 
                 catch receiveError
-                    disp(['Error receiving data: ' receiveError.message]);
+                    % disp(['Error receiving data: ' receiveError.message]);
                     break;
                 end
 
             end
 
-            disp("Client data processing finished.");
+            % disp("Client data processing finished.");
 
         catch acceptError
             disp(['Error accepting connection: ' acceptError.message]);
