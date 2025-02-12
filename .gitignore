@@ -5,3 +5,5 @@
 */hlr.db-shm
 *.log
 build
+fake_trx_sim
+2g/osmo-bts

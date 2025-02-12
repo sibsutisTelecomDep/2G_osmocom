@@ -7,9 +7,9 @@
     install_user: "{{ install_user }}"
     debug_mode: false  # true для включения режима отладки
     osmocom_libs:
+      - "libosmo-netif"
       - "libosmocore"
       - "libosmo-abis"
-      - "libosmo-netif"
       - "libosmo-sccp"
       - "libosmo-sigtran"
       - "libosmo-gprs"
@@ -171,7 +171,7 @@
     - name: Clone, compile, and install osmocom-bb
       shell: |
         cd {{ install_path }}/osmocom-bb/src
-        sudo make -j$(nproc)
+        sudo make nofirmware
 
     - name: Update shared libraries cache
       command: ldconfig
