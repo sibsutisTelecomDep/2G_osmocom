@@ -4,7 +4,7 @@ pids=()
 CFG_PATH="$PWD/cfg1"
 # USER_HOME="$HOME" # or... 
 # USER_HOME="/home/<YOUR USER>" 
-USER_HOME="/home/kasperekd" 
+USER_HOME="/home/fzybot" 
 
 echo $CFG_PATH
 start_program() {
@@ -23,14 +23,14 @@ start_program osmo-stp "$CFG_PATH/osmo-stp.cfg"
 start_program osmo-bsc "$CFG_PATH/osmo-bsc.cfg"
 
 echo "Press Enter to continue..."
-read e
+sleep 0.5
 
 # Запуск остальных компонентов
 sudo xterm -e python3 "$USER_HOME/2G/osmocom-bb/src/target/trx_toolkit/fake_trx.py" &
 start_program "osmo-bts-trx" "./cfg/osmo-bts-trx.cfg" &
 start_program "$USER_HOME/2G/osmocom-bb/src/host/trxcon/src/trxcon" &
 echo "Press Enter to continue..."
-read e
+sleep 0.5
 # start_program "$USER_HOME/2G/osmocom-bb/src/host/layer23/src/mobile/mobile" "$CFG_PATH/mobile2.cfg" &
 start_program "$USER_HOME/2G/osmocom-bb/src/host/layer23/src/mobile/mobile" "$CFG_PATH/mobile.cfg" &
 

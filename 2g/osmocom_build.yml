@@ -137,9 +137,16 @@
     - name: Update shared libraries cache
       command: ldconfig
 
-    - name: Clone, compile, and install osmo-bts
+    - name: Clone osmo-bts
+      git: 
+        repo: "https://gitea.osmocom.org/cellular-infrastructure/osmo-bts.git"
+        dest: "{{ install_path }}/osmo-bts"
+        clone: yes
+      register: osmo_trx_cloned
+
+    - name: Compile, and install osmo-bts
+
       shell: |
-        git clone https://gitea.osmocom.org/cellular-infrastructure/osmo-bts.git
         cd {{ install_path }}/osmo-bts
         autoreconf -fi
         ./configure --enable-trx CFLAGS="{{ '-g' if debug_mode else '' }}"
@@ -153,7 +160,7 @@
         clone: yes
       register: osmo_trx_cloned
 
-    - name: Clone, compile, and install osmo-trx
+    - name: Compile, and install osmo-trx
       shell: |
         cd {{ install_path }}/osmo-trx
         sudo autoreconf -fi
