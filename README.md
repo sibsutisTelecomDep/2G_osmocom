@@ -42,6 +42,8 @@ localhost                  : ok=23   changed=16   unreachable=0    failed=0    s
 ```
 
 Получаем:
+![connection_success](https://github.com/user-attachments/assets/4d0fdc2e-6589-4c48-a3cd-1002958b8be8)
+
 
 
 ## Установка и запуск прокси-сервера для перехвата GSM bursts
