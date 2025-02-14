@@ -4,7 +4,8 @@ pids=()
 CFG_PATH="$PWD/cfg1"
 # USER_HOME="$HOME" # or... 
 # USER_HOME="/home/<YOUR USER>" 
-USER_HOME="/home/fzybot" 
+LAUNCH_USER=$(whoami)
+USER_HOME="/home/$(whoami)" 
 
 echo $CFG_PATH
 start_program() {
