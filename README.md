@@ -44,7 +44,90 @@ localhost                  : ok=23   changed=16   unreachable=0    failed=0    s
 Получаем:
 ![connection_success](https://github.com/user-attachments/assets/4d0fdc2e-6589-4c48-a3cd-1002958b8be8)
 
+### Запуск стенда USRP B200
 
+```bash
+cd standB200
+./run.sh
+```
+
+Вывод при успешном запуске:
+
+<Вставить вывод с uhd trx>
+
+Проверка и добавление пользователей в HLR
+
+```bash
+./create_hlr_subscribers.sh
+```
+
+---
+
+## Установка и запуск прокси для захвата GSM bursts
+
+## Зависимости
+
+Перед сборкой установите:
+
+```bash
+sudo apt-get update
+sudo apt-get install libzmq3-dev libpcap-dev
+```
+
+### 1. Клонирование репозитория
+
+```bash
+git clone https://github.com/kasperekd/fake_trx_sim.git
+cd fake_trx_sim/src
+```
+
+### 2. Сборка
+
+```bash
+make
+```
+
+Исполняемый файл появится в папке ./build.
+
+---
+
+## Запуск программы
+
+```bash
+./build/main <interface> tcp://*:5555
+```
+
+где <interface> — имя прослушиваемого интерфейса (например, eth0).
+
+---
+
+## Запуск сети перед анализом
+
+Перед запуском утилиты убедитесь, что все компоненты Osmocom запущены:
+
+```bash
+bash launch.sh
+```
+
+---
+
+## Пример использования
+
+```bash
+./build/main eth0 tcp://*:5555
+```
+
+---
+
+## Очистка
+
+Для удаления собранных файлов:
+
+```bash
+make clean
+```
+
+---
 
 ## Установка и запуск прокси-сервера для перехвата GSM bursts
 
